@@ -1,17 +1,37 @@
-on: push
-name: Publish on Netlify
+# Name of workflow
+name: Development workflow
 
+# When workflow is triggered
+on:
+  pull_request:
+    branches:
+      - dev
+
+# Jobs to carry out
 jobs:
-  publish:
+  deploy:
+
     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@master
 
-    - name: Publish
-      uses: netlify/actions/build@master
-      env:
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        NETLIFY_BASE: site
-        NETLIFY_CMD: npm build
-        NETLIFY_DIR: site/dist
+    steps:
+      # Get code from repo
+      - name: Checkout code
+        uses: actions/checkout@v1
+      # Install NodeJS
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+      # Run npm install and build on our code
+      - run: npm install
+      - run: npm run build
+      # Deploy to Netlify using our dev secrets
+      - name: Deploy to netlify
+        uses: netlify/actions/cli@master
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        with:
+          args: deploy --dir=dist --prod
+          secrets: '["NETLIFY_AUTH_TOKEN", "NETLIFY_SITE_ID"]'
