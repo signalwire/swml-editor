@@ -6,7 +6,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
-	mode: 'development',
+	mode: isDevelopment ? 'development' : 'production',
 	entry: {
 		app: './src/index.tsx',
 		'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
@@ -33,7 +33,7 @@ module.exports = {
 					{
 						loader: require.resolve('babel-loader'),
 						options: {
-							presets: ['@babel/preset-env', '@babel/preset-typescript', '@babel/preset-react'],
+							presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
 							plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean)
 						}
 					}
