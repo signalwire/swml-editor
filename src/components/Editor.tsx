@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as monaco from "monaco-editor";
-import jsonSchema from "../swml-schema.json";
 import { configureMonacoYaml } from "monaco-yaml";
 import yamlLib from "yaml";
 
@@ -17,42 +16,49 @@ self.MonacoEnvironment = {
     },
 };
 
+configureMonacoYaml(monaco, {
+	enableSchemaRequest: true,
+	validate: true,
+	schemas: [
+		{
+			uri: "https://raw.githubusercontent.com/signalwire/swml-editor/main/src/swml-schema.json",
+			fileMatch: ["*"],
+		},
+	],
+});
+
+monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+	enableSchemaRequest: true,
+	validate: true,
+	schemas: [
+		{
+			uri: "https://raw.githubusercontent.com/signalwire/swml-editor/main/src/swml-schema.json",
+			fileMatch: ["*"],
+		},
+	],
+});
+
 export const Editor: React.FC = () => {
     const divEl = useRef<HTMLDivElement>(null);
-    const [selectedLanguage, setSelectedLanguage] = useState<"json" | "yaml">("json");
-    const [code, setCode] = useState("{}");
+    const [selectedLanguage, setSelectedLanguage] = useState<"json" | "yaml">(
+        "json"
+    );
+    const [code, setCode] = useState(`{
+	"sections": {
+		"main": [
+
+		]
+	}
+}`);
 
     let editor: monaco.editor.IStandaloneCodeEditor;
 
     useEffect(() => {
         if (divEl.current) {
-            configureMonacoYaml(monaco, {
-                enableSchemaRequest: false,
-                schemas: [
-                    {
-                        uri: "...",
-                        // @ts-expect-error TypeScript can’t narrow down the type of JSON imports
-                        jsonSchema,
-                        fileMatch: ["*"],
-                    },
-                ],
-                validate: true,
-            });
-
-            monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-                validate: true,
-                schemas: [
-                    {
-                        uri: "json",
-                        fileMatch: ["*"],
-                        schema: jsonSchema,
-                    },
-                ],
-            });
-
             editor = monaco.editor.create(divEl.current, {
                 value: code,
                 language: selectedLanguage,
+                tabSize: 2
             });
         }
 
