@@ -1,0 +1,27 @@
+.Editor {
+	width: 800px;
+	height: 600px;
+    border: 2px solid #ccc;
+	margin-top: 8px;
+}
+
+select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 10px;
+	width: max-content;
+}
+
+/* Style for the selected option */
+option:checked {
+    background-color: #3498db;
+    color: white;
+}
+
+/* Hover effect for options */
+option:hover {
+    background-color: #2980b9;
+    color: white;
+}
